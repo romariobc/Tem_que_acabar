@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ranking de Árbitros - Futebol Brasileiro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        body {
+            background-color: #009c3b;
+            color: #ffdf00;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #009c3b;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .table {
+            background-color: #ffffff;
+        }
+        .table thead {
+            background-color: #009c3b;
+            color: #ffffff;
+        }
+        .btn-outline-primary {
+            color: #009c3b;
+            border-color: #009c3b;
+        }
+        .btn-outline-primary:hover {
+            background-color: #009c3b;
+            color: #ffffff;
+        }
+        .form-control:focus {
+            border-color: #ffdf00;
+            box-shadow: 0 0 0 0.2rem rgba(255, 223, 0, 0.25);
+        }
+        #emailStatus {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Tém que Acabar! </h1>
+        <h2>Rankin de Árbitros - Futebol Brasileiro</h2>
+        
+        <div class="mb-3">
+            <input type="email" class="form-control" id="userEmail" placeholder="Seu e-mail">
+            <div id="emailStatus"></div>
+            <button class="btn btn-primary mt-2" onclick="verificarEmail()">Verificar E-mail</button>
+            <button class="btn btn-success mt-2" onclick="cadastrarEmail()">Cadastrar E-mail</button>
+        </div>
+        
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Posição</th>
+                    <th>Árbitro</th>
+                    <th>Votos</th>
+                    <th>Ação</th>
+                </tr>
+            </thead>
+            <tbody id="arbitroTableBody">
+                <!-- Árbitros serão adicionados aqui dinamicamente -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const arbitros = [
+            { nome: "Árbitro 1", votos: 0 },
+            { nome: "Árbitro 2", votos: 0 },
+            { nome: "Árbitro 3", votos: 0 },
+        ];
+
+        // Simulação de um banco de dados de e-mails cadastrados
+        let emailsCadastrados = ['exemplo@email.com', 'teste@teste.com'];
+
+        function renderizarTabela() {
+            const tbody = document.getElementById('arbitroTableBody');
+            tbody.innerHTML = '';
+            
+            arbitros.sort((a, b) => b.votos - a.votos);
+            
+            arbitros.forEach((arbitro, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${arbitro.nome}</td>
+                    <td>${arbitro.votos}</td>
+                    <td>
+                        <div class="btn-group" role="group">
+                            ${[1, 2, 3, 4, 5].map(n => `
+                                <button type="button" class="btn btn-outline-primary" onclick="votar('${arbitro.nome}', ${n})">
+                                    ${'💩'.repeat(n)}
+                                </button>
+                            `).join('')}
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function verificarEmail() {
+            const email = document.getElementById('userEmail').value;
+            const statusDiv = document.getElementById('emailStatus');
+            
+            if (emailsCadastrados.includes(email)) {
+                statusDiv.innerHTML = '<p class="text-success">E-mail cadastrado. Você pode votar!</p>';
+            } else {
+                statusDiv.innerHTML = '<p class="text-danger">E-mail não cadastrado. Por favor, cadastre-se para votar.</p>';
+            }
+        }
+
+        function cadastrarEmail() {
+            const email = document.getElementById('userEmail').value;
+            const statusDiv = document.getElementById('emailStatus');
+            
+            if (email && !emailsCadastrados.includes(email)) {
+                emailsCadastrados.push(email);
+                statusDiv.innerHTML = '<p class="text-success">E-mail cadastrado com sucesso!</p>';
+            } else if (emailsCadastrados.includes(email)) {
+                statusDiv.innerHTML = '<p class="text-warning">Este e-mail já está cadastrado.</p>';
+            } else {
+                statusDiv.innerHTML = '<p class="text-danger">Por favor, insira um e-mail válido.</p>';
+            }
+        }
+
+        function votar(nomeArbitro, quantidade) {
+            const email = document.getElementById('userEmail').value;
+            if (!email || !emailsCadastrados.includes(email)) {
+                alert('Por favor, insira um e-mail cadastrado antes de votar.');
+                return;
+            }
+            
+            const arbitro = arbitros.find(a => a.nome === nomeArbitro);
+            if (arbitro) {
+                arbitro.votos += quantidade;
+                renderizarTabela();
+            }
+        }
+
+        renderizarTabela();
+    </script>
+</body>
+</html>
